@@ -49,25 +49,39 @@ Model eğitimi sonunda gelecek yıl için **atik_tahmin** değeri elde edilir.
 | **Gerçek vs Tahmin Saçılım Grafiği** | Modelin sistematik hata üretip üretmediğini gösterir |
 | **Boxplot Analizleri** | Aykırı değer davranışlarının etkisini gösterir |
 
-### 🎨 Görselleştirme Galerisi
+## 🎨 Görselleştirme Galerisi
 
-**GBR – Korelasyon Isı Haritası**
+<div align="center">
+
+### GBR – Korelasyon Isı Haritası  
 <img src="./result/gbr_corr_heatmap.png" width="500">
 
-**GBR – Özellik Önemi**
+---
+
+### GBR – Özellik Önemi  
 <img src="./result/gbr_feature_importance.png" width="500">
 
-**GBR – Gerçek vs Tahmin**
+---
+
+### GBR – Gerçek vs Tahmin (R² = 1.00)  
 <img src="./result/gbr_scatter_actual_vs_pred.png" width="500">
 
 ---
 
-**SVR – Korelasyon Isı Haritası**
+### SVR – Korelasyon Isı Haritası  
 <img src="./result/svr_corr_heatmap.png" width="500">
 
-**SVR – Gerçek vs Tahmin**
+---
+
+### SVR – Özellik Varyansı  
+<img src="./result/svr_feature_variance.png" width="500">
+
+---
+
+### SVR – Gerçek vs Tahmin (R² = 1.00)  
 <img src="./result/svr_scatter_actual_vs_pred.png" width="500">
-g`
+
+</div>
 
 ---
 
