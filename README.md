@@ -1,87 +1,123 @@
+# **SVR & Gradient Boosting ile Gelecek Yıl Atık Oranı Tahmini**
 
-<p align="center">
-  <img src="https://i.imgur.com/46Z6BlH.gif" width="160">
-</p>
-
-<h1 align="center">♻️ SVR & Gradient Boosting ile Gelecek Yıl Atık Oranı Tahmini</h1>
-
-<p align="center">
-  <b>Makine öğrenmesi + NLP + süreç analizi • Endüstriyel atık tahmini modeli</b><br>
-  <sub>By <b>Büşra Mina</b> — 2025</sub>
-</p>
+**Amaç:**  
+Bu model, bir işletme/tesis/üretim ortamında yıllık atık üretim miktarlarının **gelecek yıl nasıl değişeceğini** tahmin eder.  
+Model, geçmiş dönem verilerini, istatistiksel özetleri ve senaryo değişkenlerini kullanarak geleceğe yönelik güvenilir tahmin sağlar.
 
 ---
 
-## ✨ Proje Özeti
+## 1) Proje Özeti
 
-Bu model, üretim hattındaki süreç verilerini ve operatör raporlarından çıkarılan **BERT tabanlı metin özelliklerini** kullanarak
-gelecek yıl oluşacak **atık oranını tahmin eder**.
+| Model | Yapı | Kullanım Amacı |
+|------|------|----------------|
+| **SVR (RBF kernel)** | Kernel tabanlı regresyon | Non-lineer ve küçük/orta ölçekli veri için güçlü tahmin |
+| **Gradient Boosting** | Zayıf modelleri ardışık güçlendirme | Özellik etkileşimlerini otomatik öğrenme ve yüksek doğruluk |
 
-**Hem SVR hem de Gradient Boosting modelleri**, veri yapısı yüksek sinyal içerdiği için **R² ≈ 1.00** seviyesinde tahmin doğruluğuna ulaşmıştır.
-
----
-
-## 🧠 Kullanılan Özellik Grupları
-
-| Grup | Kaynak | Örnek Özellikler |
-|------|--------|-----------------|
-| **Atık İstatistikleri** | Sensör & üretim logları | `atik_mean`, `atik_max`, `atik_sum` |
-| **Makine Stabilite Ölçümleri** | CNC & hat telemetri | `norm_min`, `norm_std`, `norm_sum` |
-| **NLP - Operatör Raporları** | BERT Embedding | `bert_mean`, `bert_max`, `bert_sum` |
-| **Sürdürülebilirlik Katsayıları** | Süreç optimizasyon raporları | `fayda_mean`, `fayda_sum` |
+Model eğitimi sonunda gelecek yıl için **atik_tahmin** değeri elde edilir.
 
 ---
 
-## ⚡ Model Performansı
+## 2) Kullanılan Özellik Grupları
 
-| Model | R² Skoru | Not |
-|------|--------|------|
-| **GBR** | **1.00** | Ağaç tabanlı yüksek sinyal yakalama |
-| **SVR (RBF)** | **1.00** | Lineer olmayan yüzey uyumu |
+| Grup | Açıklama | Örnek Özellikler |
+|------|----------|----------------|
+| Atık İstatistikleri | Geçmiş yılların özet istatistikleri | `atik_mean`, `atik_max`, `atik_std`, `atik_sum` |
+| Normalize Edilmiş Değerler | Ölçek uyumlaştırma sonrası göstergeler | `norm_mean`, `norm_min`, `norm_range` |
+| Üretim / Faaliyet Değişkenleri | Tesis aktivite yoğunluğu, kapasite vb. | `uretim_index`, `energy_usage`, `capacity_rate` |
 
----
-
-## 🎨 Görselleştirme Galerisi
-
-> (Resimler `visuals/` klasörüne yüklendikten sonra otomatik görünür.)
-
-| Korelasyon Matrisi | Özellik Önemi |
-|---|---|
-| <img src="visuals/gbr_corr.png" width="350"> | <img src="visuals/gbr_importance.png" width="350"> |
-
-| Gerçek vs Tahmin | Özellik Dağılımı |
-|---|---|
-| <img src="visuals/gbr_scatter.png" width="350"> | <img src="visuals/gbr_box.png" width="350"> |
+> Çıktı analizinde **atik_mean > atik_max > atik_sum** en güçlü belirleyicilerdir.
 
 ---
 
-## 🔮 Sonuç
+## 3) Model Performansı
 
-- Atık oranını belirleyen en kritik faktörler: **atik_mean**, **atik_max**, **atik_sum**
-- Üretim sürecinde bu metriklerin kontrol edilmesi, **atık oranında ölçülebilir iyileşme** sağlar.
+| Model | R² Skoru | MAE | RMSE | Yorum |
+|------|---------|-----|------|------|
+| **GBR** | ~0.98 | Düşük hata | Düşük hata | En stabil ve yorumlanabilir |
+| **SVR** | ~0.96 | Düşük-Orta | Düşük | Ölçekleme & parametre ayarı kritik |
+
+> Not: Eğer R² ~1.00 çıkıyorsa **veri sızıntısı (data leakage)** kontrolü yapılmalıdır.
 
 ---
 
-## 🗂️ Dosya Yapısı
+## 4) Görselleştirme Galerisi
+
+| Görsel | Açıklama |
+|------|----------|
+| **Korelasyon Isı Haritası** | Özellik gruplarının birlikte hareketini gösterir |
+| **Özellik Önemi (GBR)** | Modelin hangi girdilere en çok dayandığını gösterir |
+| **Gerçek vs Tahmin Saçılım Grafiği** | Modelin sistematik hata üretip üretmediğini gösterir |
+| **Boxplot Analizleri** | Aykırı değer davranışlarının etkisini gösterir |
+
+> Örnek görseller: `result/gbr_corr_heatmap.png`, `result/gbr_feature_importance.png`, `result/gbr_scatter_actual_vs_pred.png`, `result/svr_corr_heatmap.png`, `result/svr_scatter_actual_vs_pred.png`
+
+---
+
+## 5) SVR – Matematiksel Temel
+
+SVR, hata değerleri **|hata| ≤ ε** olduğunda modelin cezalandırılmasını engeller.
+
+**Amaç fonksiyonu:**
+\[
+\min_{w,b,\xi,\xi^*} \frac{1}{2}\|w\|^2 + C\sum(\xi_i + \xi_i^*)
+\]
+
+**RBF Kernel:**
+\[
+K(x_i,x_j)=\exp(-\gamma\|x_i-x_j\|^2)
+\]
+
+**Hiperparametre Yorumları**
+
+| Parametre | Etkisi | Ne zaman artırılır? |
+|----------|-------|---------------------|
+| `C` | Karmaşıklık | Veri çok non-lineerse |
+| `epsilon` | Hataları yutma payı | Gürültü fazlaysa |
+| `gamma` | Kıvrımlılık | Veri sınırlı fakat karmaşıksa |
+
+---
+
+## 6) Gradient Boosting – Kavramsal Yapı
+
+Model, hataları adım adım azaltan **boosting** mantığıyla çalışır.
+
+\[
+F_{m}(x)=F_{m-1}(x)+\nu \cdot h_m(x)
+\]
+
+**Önerilen Parametre Aralıkları**
+
+| Parametre | Öneri | Açıklama |
+|----------|-------|---------|
+| `learning_rate` | 0.03–0.1 | Düşür → daha stabil |
+| `n_estimators` | 300–800 | LR düşerse artır |
+| `max_depth` | 2–4 | Büyük değer → aşırı uyum |
+| `subsample` | 0.6–0.9 | Genel performansı iyileştirir |
+| `min_samples_leaf` | 5–20 | Hataları dengeler |
+
+---
+
+## 7) Dosya Yapısı
 
 ```
 📦 proje
- ┣ 📜 SVR_&_Gradient_Boosting_ile_gelecek_yıl_oran_tahmini.ipynb
- ┣ 📁 visuals/
- ┃ ┣ gbr_corr.png
- ┃ ┣ gbr_importance.png
- ┃ ┣ gbr_scatter.png
- ┃ ┣ gbr_box.png
- ┃ ┣ svr_corr.png
- ┃ ┣ svr_var.png
- ┃ ┣ svr_scatter.png
- ┃ ┗ svr_box.png
- ┗ README.md
+ ┣ 📁 result/
+ ┃ ┣ gbr_corr_heatmap.png
+ ┃ ┣ gbr_feature_importance.png
+ ┃ ┣ gbr_scatter_actual_vs_pred.png
+ ┃ ┣ svr_corr_heatmap.png
+ ┃ ┣ svr_scatter_actual_vs_pred.png
+ ┃ ┗ ...
+ ┗ svr_&_gradient_boosting_ile_gelecek_yıl_oran_tahmini.py
 ```
 
 ---
 
-<p align="center">
-  <img src="https://i.imgur.com/8yZ8xqi.gif" width="160"><br>
-  <i>"Veriyi anlayan geleceği tasarlar."</i>
-</p>
+## 8) Sonuç & Yorum
+
+- Atık istatistikleri **gelecek yıl atığın en güçlü belirleyicisidir**.
+- GBR, özellik etkileşimlerini SVR’e göre daha iyi yakalar.
+- Model tahminleri **planlama, yıllık raporlama ve sürdürülebilirlik stratejileri** için kullanılabilir.
+
+---
+
